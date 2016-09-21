@@ -52,7 +52,7 @@ int ReadMatrixFile(	const std::string &filename,
 					cusp::array1d<VALUE_TYPE, cusp::host_memory> &val_vec,
 					int &mat_rows,
 					int &mat_cols,
-					bool zeroIndex = true)
+					bool zeroIndex = false)
 {
 	std::ifstream mat_file(filename.c_str());
 	int nnz = 0;
@@ -77,7 +77,6 @@ int ReadMatrixFile(	const std::string &filename,
 		row_vec.resize(nnz);
 		col_vec.resize(nnz);
 		val_vec.resize(nnz);
-
 		for(int i=0; i<nnz; ++i)
 		{
 			INDEX_TYPE row, col;
@@ -101,7 +100,6 @@ int ReadMatrixFile(	const std::string &filename,
 			//printf("(%d %d) : %f\n", row, col, val);
 			mat[row].push_back(std::pair<INDEX_TYPE,VALUE_TYPE>(col, val));
 		}
-
 		for(int i=0; i<rows; ++i)
 			sort(mat[i].begin(), mat[i].end());
 
@@ -442,12 +440,13 @@ void LoadMatrix( 	dcsr_matrix<INDEX_TYPE, VALUE_TYPE, cusp::device_memory, BINS>
 {
 	double startTime = omp_get_wtime();
 	//device::UpdateMatrix(mat, rows, cols, vals);
+fprintf(stderr, "DCSR matrix call to LoadMatrix()\n");
 	device::LoadMatrix(mat, rows, cols, vals, NNZ);
 	safeSync();
 	double endTime = omp_get_wtime();
 
 	//cudaPrintfDisplay(stdout, true);
-	//fprintf(stderr, "DCSR matrix load time:  %f\n", (endTime - startTime));
+fprintf(stderr, "DCSR matrix load time:  %f\n", (endTime - startTime));
 
 	device::BinRows(mat);
 }
