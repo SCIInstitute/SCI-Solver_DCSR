@@ -1,4 +1,4 @@
-# DCSR
+# SCI-Solver_DCSR
 Dynamic CSR matrix
 
 This is still a work in progress...
